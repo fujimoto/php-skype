@@ -74,11 +74,39 @@ class Skype_Chat extends Skype_Object {
 		),
 
 		// Protocol 7
+		'PASSWORDHINT' => array(
+			'default'	=> false,
+			'type'		=> Skype::property_type_string,
+		),
+		'GUIDELINES' => array(
+			'default'	=> false,
+			'type'		=> Skype::property_type_string,
+		),
+		'OPTIONS' => array(
+			'default'	=> false,
+			'type'		=> Skype::property_type_int,
+		),
+		'DESCRIPTION' => array(
+			'default'	=> false,
+			'type'		=> Skype::property_type_string,
+		),
+		'DIALOG_PARTNER' => array(
+			'default'	=> false,
+			'type'		=> Skype::property_type_string,
+		),
 		'ACTIVITY_TIMESTAMP' => array(
 			'default'	=> true,
 			'type'		=> Skype::property_type_int,
 		),
 		'TYPE' => array(
+			'default'	=> true,
+			'type'		=> Skype::property_type_string,
+		),
+		'MYSTATUS' => array(
+			'default'	=> true,
+			'type'		=> Skype::property_type_string,
+		),
+		'MYROLE' => array(
 			'default'	=> true,
 			'type'		=> Skype::property_type_string,
 		),

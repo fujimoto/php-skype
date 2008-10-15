@@ -431,6 +431,9 @@ class Skype {
 	}
 
 	protected function _debug($format) {
+		if ($this->debug == false) {
+			return;
+		}
 		$args = func_get_args();
 		array_shift($args);
 		vprintf($format, $args);

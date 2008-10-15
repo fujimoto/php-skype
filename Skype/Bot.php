@@ -50,10 +50,7 @@ class Skype_Bot {
 		$klass = sprintf("Skype_Bot_Plugin_%s", ucfirst(strtolower($plugin_id)));
 		if (class_exists($klass) == false) {
 			$path = sprintf("Skype/Bot/Plugin/%s.php", ucfirst(strtolower($plugin_id)));
-			if (is_readable($path) == false) {
-				throw new Exception(sprintf("plugin file not found [%s]", $path));
-			}
-			require_once($path);
+			include_once($path);
 		}
 		if (class_exists($klass) == false) {
 			throw new Exception(sprintf("plugin class not found [%s]", $klass));
