@@ -22,6 +22,7 @@ class Skype_Bot {
 	protected	$debug;
 	private		$skype;
 	protected	$plugin_list = array();
+	protected	$poll_list = array();
 
 	public function __construct($id, $debug = false) {
 		$this->debug = $debug;
@@ -33,7 +34,12 @@ class Skype_Bot {
 
 		for (;;) {
 			try {
-				$this->skype->poll(86400);
+				$this->skype->poll(1);
+				foreach ($this->poll_list as $plugin_id => $tmp) {
+					$ts = time();
+					$tmp['plugin']->poll($ts, $tmp['ts']);
+					$this->poll_list[$plugin_id]['ts'] = $ts;
+				}
 			} catch (Skype_Exception $e) {
 				print $e;
 			} catch (Exception $e) {
@@ -62,6 +68,9 @@ class Skype_Bot {
 		}
 
 		$this->plugin_list[$plugin_id] = $plugin;
+		if ($plugin->isPoll()) {
+			$this->poll_list[$plugin_id] = array('ts' => null, 'plugin' => $plugin);
+		}
 
 		// add callbacks (...)
 		$callback_type_list = $this->skype->getCallbackTypeList();

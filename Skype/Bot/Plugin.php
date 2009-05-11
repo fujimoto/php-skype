@@ -20,6 +20,7 @@ class Skype_Bot_Plugin {
 	protected	$skype = null;
 	protected	$chat_topic_filter = null;
 	protected	$chat_id_filter = null;
+	protected	$poll = false;
 
 	public function __construct($skype_bot, $parameter) {
 		$this->skype_bot = $skype_bot;
@@ -31,6 +32,10 @@ class Skype_Bot_Plugin {
 		if (isset($parameter['chat_id_filter'])) {
 			$this->chat_id_filter = $parameter['chat_id_filter'];
 		}
+	}
+
+	public function isPoll() {
+		return $this->poll;
 	}
 
 	public function handleCall() {
@@ -67,6 +72,9 @@ class Skype_Bot_Plugin {
 	}
 
 	public function handleUserstatus($user_status) {
+	}
+
+	public function poll($ts, $ts_prev) {
 	}
 
 	protected function _chatFilter($chat) {
