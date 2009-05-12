@@ -118,6 +118,10 @@ class Skype_Chat extends Skype_Object {
 	public function invokeChatmessage($message) {
 		return $this->skype->invokeChatmessage($this->getId(), $message);
 	}
+
+	public function invokeAlterChatSettopic($topic) {
+		return $this->skype->invokeAlterChatSettopic($this->getId(), $topic);
+	}
 }
 
 /*

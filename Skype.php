@@ -182,6 +182,12 @@ class Skype {
 		$tmp = explode(" ", $s, 3);
 		return $tmp[0];		// chatmessage_id
 	}
+
+	public function invokeAlterChatSettopic($chat_id, $topic) {
+		list($r, $s) = $this->invoke("ALTER CHAT $chat_id SETTOPIC $topic");
+		
+		return true;
+	}
 	
 	public function invokeProtocol($protocol) {
 		list($r, $s) = $this->invoke("PROTOCOL $protocol");
