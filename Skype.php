@@ -16,11 +16,13 @@
  */
 require_once 'Skype/Exception.php';
 require_once 'Skype/Object.php';
+require_once 'Skype/Call.php';
 require_once 'Skype/Chat.php';
 require_once 'Skype/Chatmessage.php';
 require_once 'Skype/Filetransfer.php';
 require_once 'Skype/Group.php';
 require_once 'Skype/User.php';
+require_once 'Skype/Profile.php';
 
 class Skype {
 	const dbus_destination = "com.Skype.API";
@@ -41,6 +43,7 @@ class Skype {
 	protected	$debug;
 
 	protected	$callback = array(
+		'call'			=> array(),
 		'chat'			=> array(),
 		'chatmessage'	=> array(),
 		'chats'			=> array(),
@@ -59,6 +62,7 @@ class Skype {
 	protected	$current_user_handle = null;
 	protected	$user_status = null;
 
+	protected	$call_list = array();
 	protected	$chat_list = array();
 	protected	$chatmessage_cache = array();
 	protected	$chatmessage_cache_size = 16;
@@ -67,6 +71,7 @@ class Skype {
 	protected	$filetransfer_cache_size = 16;
 	protected	$group_list = array();
 	protected	$user_list = array();
+	protected	$profile = null;
 
 	public function __construct($id, $protocol = self::default_protocol, $debug = false) {
 		$this->id = $id;
@@ -122,7 +127,7 @@ class Skype {
 	}
 
 	public function poll($timeout = self::default_timeout) {
-		$this->_debug("poll:   timeout=%d\n", $timeout);
+		// $this->_debug("poll:   timeout=%d\n", $timeout);
 		return $this->dbus_connection->poll($timeout);
 	}
 
@@ -175,6 +180,21 @@ class Skype {
 	}
 
 	/* {{{ Skype API (client -> Skype) */
+	public function invokeCall($target) {
+		list($r, $s) = $this->invoke("CALL $target");
+		list($call_id, $key, $value) = preg_split('/\s+/', $s, 3);
+
+		$this->call_list[$call_id] = new Skype_Call($this, $call_id);
+
+		return $call_id;
+	}
+
+	public function invokeCallStatusFinish($call_id) {
+		list($r, $s) = $this->invoke("SET CALL $call_id STATUS FINISHED");
+
+		return true;
+	}
+
 	public function invokeChatmessage($chat_id, $message) {
 		list($r, $s) = $this->invoke("CHATMESSAGE $chat_id $message");
 		$this->handleChatmessage($s);
@@ -218,7 +238,16 @@ class Skype {
 
 	/* {{{ Skype API (Skype -> Client) */
 	public function handleCall($s) {
-		// not yet implemented
+		list($call_id, $property, $value) = explode(" ", $s, 3);
+
+		if (isset($this->call_list[$call_id]) == false) {
+			$this->call_list[$call_id] = new Skype_Call($this, $call_id);
+		}
+		$call = $this->call_list[$call_id];
+
+		$call->set($property, $value);
+
+		$this->_requestCallback($this->callback['call'], $call, $call_id, $property, $value);
 	}
 
 	public function handleChat($s) {
@@ -332,6 +361,17 @@ class Skype {
 
 		$this->_requestCallback($this->callback['userstatus'], $user_status);
 	}
+
+	public function handleProfile($s) {
+		list($property, $value) = explode(" ", $s, 2);
+
+		if (is_null($this->profile)) {
+			$this->profile = new Skype_Profile($this, null);
+		}
+		$profile->set($property, $value);
+
+		$this->_requestCallback($this->callback['profile'], $this->profile, null, $property, $value);
+	}
 	/* }}} */
 
 	/* {{{ accessor */
@@ -357,6 +397,14 @@ class Skype {
 
 	public function setTimeout($timeout) {
 		$this->timeout = $timeout;
+	}
+
+	public function getCall($call_id) {
+		if (isset($this->call_list[$call_id]) == false) {
+			return null;
+		}
+
+		return $this->call_list[$call_id];
 	}
 
 	public function getChat($chat_id) {
