@@ -54,6 +54,7 @@ class Skype {
 		'group'			=> array(),
 		'user'			=> array(),
 		'userstatus'	=> array(),
+		'profile'		=> array(),
 	);
 
 	protected	$id;
@@ -472,6 +473,14 @@ class Skype {
 
 	public function getUserStatus() {
 		return $this->user_status;
+	}
+
+	public function getProfile() {
+		if (is_null($this->profile)) {
+			$this->profile = new Skype_Profile($this, null);
+		}
+
+		return $this->profile;
 	}
 	/* }}} */
 
