@@ -84,7 +84,12 @@ class Skype_Object {
 
 		list($r, $s) = $this->skype->invoke("GET {$this->ident} {$this->id} $property");
 		$tmp = explode(" ", $s, 3);
-		return $this->skype->parseProperty($def['type'], $tmp[2]);
+		if (isset($tmp[2])) {
+			$tmp_arg = $tmp[2];
+		} else {
+			$tmp_arg = null;
+		}
+		return $this->skype->parseProperty($def['type'], $tmp_arg);
 	}
 }
 
