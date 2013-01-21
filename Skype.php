@@ -482,6 +482,10 @@ class Skype {
 
 		return $this->profile;
 	}
+
+	public function getChatList() {
+		return $this->chat_list;
+	}
 	/* }}} */
 
 	protected function _requestCallback($callback_list, $args) {

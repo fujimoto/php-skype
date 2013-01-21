@@ -97,7 +97,9 @@ class Skype_Bot {
 		// search friends, group, chats in advance
 		$user_id_list = $this->skype->invokeSearchFriends();
 		foreach ($user_id_list as $user_id) {
-			$this->skype->getUser($user_id);	// dummy
+			if ($user_id != '') {
+				$this->skype->getUser($user_id);	// dummy
+			}
 		}
 
 		$group_id_list = $this->skype->invokeSearchGroups(Skype_Group::search_type_all);
