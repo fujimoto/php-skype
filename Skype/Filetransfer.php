@@ -49,6 +49,10 @@ class Skype_Filetransfer extends Skype_Object {
 			'default'	=> true,
 			'type'		=> Skype::property_type_string,
 		),
+		'FILENAME' => array(
+			'default'	=> true,
+			'type'		=> Skype::property_type_string,
+		),
 		'FILESIZE' => array(
 			'default'	=> true,
 			'type'		=> Skype::property_type_int,
